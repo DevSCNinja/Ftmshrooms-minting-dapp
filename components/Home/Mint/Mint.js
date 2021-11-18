@@ -318,9 +318,10 @@ const Mint = () => {
           signer
         );
 
-        const mintCost = await contract.getCurrentPrice();
-
+        const mintCost = await contract.getCurrentPrice();        
         setEstimatedPrice(ethers.utils.formatEther(mintCost.toString()));
+        setPrice(mintCost.toString());
+
         return mintCost.toString();
       }
     } catch (err) {
@@ -328,52 +329,137 @@ const Mint = () => {
     }
   };
 
+  const getBalanceOf = async (address) => {
+
+    const web3Modal = new Web3Modal();
+    const connection = await web3Modal.connect();
+    const provider = new ethers.providers.Web3Provider(connection);
+    const signer = provider.getSigner();
+
+    const contract = new ethers.Contract(
+      SmartContractAddress,
+      SmartContract.abi,
+      signer
+    );
+
+    const balanceOf = await contract.balanceOf(address);
+    return balanceOf.toString()
+  };
+
+  const getFreeMintedState = async (address) => {
+
+    const web3Modal = new Web3Modal();
+    const connection = await web3Modal.connect();
+    const provider = new ethers.providers.Web3Provider(connection);
+    const signer = provider.getSigner();
+
+    const contract = new ethers.Contract(
+      SmartContractAddress,
+      SmartContract.abi,
+      signer
+    );
+
+    const freeMintedState = await contract.freeminted(address);
+    return freeMintedState
+  };
+
   const mint = async () => {
 
+    setLoading(true);
     var Web3 = require('web3');
     var web3 = new Web3(Web3.givenProvider);
 
     const accounts = await web3.eth.getAccounts();
     const whiteList = await getWhitelistState(accounts[0]);
+    const currentStage = await getCurrentStage();
+    const balanceOf = await getBalanceOf(accounts[0]);
 
-    setLoading(true);
-    if (whiteList) {
-      try {
-        const chainId = await web3.eth.getChainId()
-        if (chainId === 4002) {
-          try {
-            const web3Modal = new Web3Modal();
-            const connection = await web3Modal.connect();
-            const provider = new ethers.providers.Web3Provider(connection);
-            const signer = provider.getSigner();
 
-            const contract = new ethers.Contract(
-              SmartContractAddress,
-              SmartContract.abi,
-              signer
-            );
+    try {
+      const chainId = await web3.eth.getChainId()
+      if (chainId === 4002) {
 
-            const mintCost = await getCurrentPrice();
+        if (currentStage === 0) { // PRESALE stage
+          if (whiteList) {
+            if (balanceOf === maxBuyable[0]) {
+              MintAlert.fire({
+                title:
+                  <Typography component="h2" className={globalClasses.alertTitle}>
+                    Oops!
+                  </Typography>,
+                html:
+                  <Typography component="p" className={globalClasses.alertText}>
+                    You can buy only a max of {maxBuyable[0]} NFTs at this stage!
+                  </Typography>,
+                icon: 'warning'
+              })
+              setLoading(false)
+            } else if (balanceOf < maxBuyable[0] && (maxBuyable[0] - balanceOf) <= amount) { // the request matched !!
 
-            await contract.mint(amount, {
-              value: (mintCost * amount).toString(),
-            });
+              // mint start
+              try {
+                const web3Modal = new Web3Modal();
+                const connection = await web3Modal.connect();
+                const provider = new ethers.providers.Web3Provider(connection);
+                const signer = provider.getSigner();
 
-            setLoading(false)
-            MintAlert.fire({
-              title:
-                <Typography component="h2" className={globalClasses.alertTitle}>
-                  Congratulation!
-                </Typography>,
-              html:
-                <Typography component="p" className={globalClasses.alertText}>
-                  You have done!
-                </Typography>,
-              icon: 'success'
-            })
-          } catch (err) {
+                const contract = new ethers.Contract(
+                  SmartContractAddress,
+                  SmartContract.abi,
+                  signer
+                );
 
-            setLoading(false)
+                await contract.mint(amount, {
+                  value: estimatedPrice,
+                });
+
+                setLoading(false)
+                MintAlert.fire({
+                  title:
+                    <Typography component="h2" className={globalClasses.alertTitle}>
+                      Congratulation!
+                    </Typography>,
+                  html:
+                    <Typography component="p" className={globalClasses.alertText}>
+                      You have done!
+                    </Typography>,
+                  icon: 'success'
+                })
+                setLoading(false)
+              } catch (err) {
+
+                MintAlert.fire({
+                  title:
+                    <Typography component="h2" className={globalClasses.alertTitle}>
+                      Oops!
+                    </Typography>,
+                  html:
+                    <Typography component="p" className={globalClasses.alertText}>
+                      {err.data.message}
+                    </Typography>,
+                  icon: 'warning'
+                })
+                setLoading(false)
+              }
+
+              // mint end
+
+            } else if (balanceOf < maxBuyable[0] && (maxBuyable[0] - balanceOf) > amount) {
+
+              MintAlert.fire({
+                title:
+                  <Typography component="h2" className={globalClasses.alertTitle}>
+                    Oops!
+                  </Typography>,
+                html:
+                  <Typography component="p" className={globalClasses.alertText}>
+                    You can buy only a max of {maxBuyable[0]} NFTs at this stage!<br />You already bought the {balanceOf} NFT.
+                  </Typography>,
+                icon: 'error'
+              })
+              setLoading(false)
+            }
+          } else {
 
             MintAlert.fire({
               title:
@@ -382,61 +468,211 @@ const Mint = () => {
                 </Typography>,
               html:
                 <Typography component="p" className={globalClasses.alertText}>
-                  {err.data.message}
+                  Only whitelisted address can mint first 250 NFTs
                 </Typography>,
               icon: 'warning'
             })
+            setLoading(false)
+          }
+        } else if (currentStage === 1) { // PUBLICSALE stage
+          if (balanceOf === maxBuyable[1]) {
+            MintAlert.fire({
+              title:
+                <Typography component="h2" className={globalClasses.alertTitle}>
+                  Oops!
+                </Typography>,
+              html:
+                <Typography component="p" className={globalClasses.alertText}>
+                  You can buy only a max of {maxBuyable[1]} NFTs at this stage!
+                </Typography>,
+              icon: 'warning'
+            })
+            setLoading(false)
+          } else if (balanceOf < maxBuyable[1] && (maxBuyable[1] - balanceOf) <= amount) { // the request matched !!
 
-            const web3Modal = new Web3Modal();
-            const connection = await web3Modal.connect();
-            const provider = new ethers.providers.Web3Provider(connection);
-            const signer = provider.getSigner();
-            const network = await provider.getNetwork();
+            // mint start
+            try {
+              const web3Modal = new Web3Modal();
+              const connection = await web3Modal.connect();
+              const provider = new ethers.providers.Web3Provider(connection);
+              const signer = provider.getSigner();
 
-            if (network.chainId !== 4002) {
+              const contract = new ethers.Contract(
+                SmartContractAddress,
+                SmartContract.abi,
+                signer
+              );
+
+              await contract.mint(amount, {
+                value: estimatedPrice,
+              });
+
+              setLoading(false)
+              MintAlert.fire({
+                title:
+                  <Typography component="h2" className={globalClasses.alertTitle}>
+                    Congratulation!
+                  </Typography>,
+                html:
+                  <Typography component="p" className={globalClasses.alertText}>
+                    You have done!
+                  </Typography>,
+                icon: 'success'
+              })
+              setLoading(false)
+            } catch (err) {
+
 
               MintAlert.fire({
                 title:
                   <Typography component="h2" className={globalClasses.alertTitle}>
                     Oops!
                   </Typography>,
-                html: <p>Please switch to FTM network</p>,
-                icon: 'error'
+                html:
+                  <Typography component="p" className={globalClasses.alertText}>
+                    {err.data.message}
+                  </Typography>,
+                icon: 'warning'
               })
-            } else {
-              // alert("Failed to transact");
+              setLoading(false)
             }
-          }
-        } else {
-          toast.error('The wrong network, please switch to the Fantom network.', {
-            position: "top-center",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            theme: "colored"
-          });
-        }
-      } catch (err) {
-        console.log(err)
-      }
-    } else {
 
-      MintAlert.fire({
-        title:
-          <Typography component="h2" className={globalClasses.alertTitle}>
-            Oops!
-          </Typography>,
-        html:
-          <Typography component="p" className={globalClasses.alertText}>
-            Only whitelisted address can mint first 250 NFTs
-          </Typography>,
-        icon: 'warning'
-      })
+            // mint end
+
+          } else if (balanceOf < maxBuyable[1] && (maxBuyable[1] - balanceOf) > amount) {
+
+            MintAlert.fire({
+              title:
+                <Typography component="h2" className={globalClasses.alertTitle}>
+                  Oops!
+                </Typography>,
+              html:
+                <Typography component="p" className={globalClasses.alertText}>
+                  You can buy only a max of {maxBuyable[1]} NFTs at this stage!<br />You already bought the {balanceOf} NFT.
+                </Typography>,
+              icon: 'error'
+            })
+            setLoading(false)
+          }
+        } else { //FREESAME stage
+
+          const freeMintedState = await getFreeMintedState(accounts[0])
+
+          if (balanceOf === 0) {
+            MintAlert.fire({
+              title:
+                <Typography component="h2" className={globalClasses.alertTitle}>
+                  Oops!
+                </Typography>,
+              html:
+                <Typography component="p" className={globalClasses.alertText}>
+                  You can't get any free NFT. Please contact the our team.
+                </Typography>,
+              icon: 'error'
+            })
+          } else if (balanceOf === 6) {
+            MintAlert.fire({
+              title:
+                <Typography component="h2" className={globalClasses.alertTitle}>
+                  Oops!
+                </Typography>,
+              html:
+                <Typography component="p" className={globalClasses.alertText}>
+                  You can't get more free NFT. You have enough NFTs.
+                </Typography>,
+              icon: 'info'
+            })
+          } else if (amount > 1) {
+            MintAlert.fire({
+              title:
+                <Typography component="h2" className={globalClasses.alertTitle}>
+                  Oops!
+                </Typography>,
+              html:
+                <Typography component="p" className={globalClasses.alertText}>
+                  You can get only one free NFT.
+                </Typography>,
+              icon: 'error'
+            })
+          } else if (freeMintedState) {
+            MintAlert.fire({
+              title:
+                <Typography component="h2" className={globalClasses.alertTitle}>
+                  Oops!
+                </Typography>,
+              html:
+                <Typography component="p" className={globalClasses.alertText}>
+                  You have a free NFT. You can get only one free NFT.
+                </Typography>,
+              icon: 'error'
+            })
+          } else { // request matched
+            // mint start
+            try {
+              const web3Modal = new Web3Modal();
+              const connection = await web3Modal.connect();
+              const provider = new ethers.providers.Web3Provider(connection);
+              const signer = provider.getSigner();
+
+              const contract = new ethers.Contract(
+                SmartContractAddress,
+                SmartContract.abi,
+                signer
+              );
+
+              await contract.mint(amount, {
+                value: estimatedPrice,
+              });
+
+              setLoading(false)
+              MintAlert.fire({
+                title:
+                  <Typography component="h2" className={globalClasses.alertTitle}>
+                    Congratulation!
+                  </Typography>,
+                html:
+                  <Typography component="p" className={globalClasses.alertText}>
+                    You have done!
+                  </Typography>,
+                icon: 'success'
+              })
+              setLoading(false)
+            } catch (err) {
+
+              MintAlert.fire({
+                title:
+                  <Typography component="h2" className={globalClasses.alertTitle}>
+                    Oops!
+                  </Typography>,
+                html:
+                  <Typography component="p" className={globalClasses.alertText}>
+                    {err.data.message}
+                  </Typography>,
+                icon: 'warning'
+              })
+              setLoading(false)
+            }
+
+            // mint end
+          }
+        }
+      } else {
+        toast.error('The wrong network, please switch to the Fantom network.', {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          theme: "colored"
+        });
+        setLoading(false)
+      }
+    } catch (err) {
+      console.log(err)
+      setLoading(false)
     }
 
-    setLoading(false)
 
   };
 
