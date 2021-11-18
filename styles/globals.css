@@ -1,0 +1,25 @@
+/* Global Styles */
+*,
+*::before,
+*::after {
+  padding: 0;
+  margin: 0;
+  box-sizing: inherit;
+}
+
+/* Font sizes */
+@media only screen and (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+@media only screen and (min-width: 480px) and (max-width: 768px) {
+  html {
+    font-size: 15px;
+  }
+}
+@media only screen and (max-width: 479px) {
+  html {
+    font-size: 14px;
+  }
+}
