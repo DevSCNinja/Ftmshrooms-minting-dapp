@@ -16,7 +16,7 @@ import Web3Modal from "web3modal";
 // Contract
 import SmartContract from "../../../ABI/Shrooms.json";
 
-const SmartContractAddress = "0x27D61C32e82E2eCb32EA236aAE3801576Dc65f33";
+const SmartContractAddress = "0x4231B1781407C52cAd238D8746453D0C726A6F70";
 
 // Components
 import MintProgress from "./MintProgress/MintProgress";
@@ -132,7 +132,7 @@ const Mint = () => {
     try {
       const accounts = await web3.eth.getAccounts()
       const chainId = await web3.eth.getChainId()
-      if (chainId === 4002) {
+      if (chainId === 250) {
         const amountForNextPrice = 500 - (sold % 500);
         const currentPriceId = await getCurrentStage();
         const currentPrice = await getCurrentPrice();
@@ -166,7 +166,7 @@ const Mint = () => {
 
     try {
       const chainId = await web3.eth.getChainId()
-      if (chainId === 4002) {
+      if (chainId === 250) {
 
         // const contract = new ethers.Contract(
         //   SmartContractAddress,
@@ -195,7 +195,7 @@ const Mint = () => {
 
     try {
       const chainId = await web3.eth.getChainId()
-      if (chainId === 4002) {
+      if (chainId === 250) {
 
         // const contract = new ethers.Contract(
         //   SmartContractAddress,
@@ -238,7 +238,7 @@ const Mint = () => {
 
     try {
       const chainId = await web3.eth.getChainId()
-      if (chainId === 4002) {
+      if (chainId === 250) {
         ethereum
           .request({ method: 'eth_requestAccounts' })
           .then()
@@ -321,7 +321,7 @@ const Mint = () => {
 
     try {
       const chainId = await web3.eth.getChainId()
-      if (chainId === 4002) {
+      if (chainId === 250) {
 
         // const contract = new ethers.Contract(
         //   SmartContractAddress,
@@ -342,7 +342,7 @@ const Mint = () => {
 
     try {
       const chainId = await web3.eth.getChainId()
-      if (chainId === 4002) {
+      if (chainId === 250) {
 
         // const contract = new ethers.Contract(
         //   SmartContractAddress,
@@ -363,7 +363,7 @@ const Mint = () => {
 
     try {
       const chainId = await web3.eth.getChainId()
-      if (chainId === 4002) {
+      if (chainId === 250) {
 
         // const contract = new ethers.Contract(
         //   SmartContractAddress,
@@ -384,7 +384,7 @@ const Mint = () => {
 
     try {
       const chainId = await web3.eth.getChainId()
-      if (chainId === 4002) {
+      if (chainId === 250) {
 
         // const contract = new ethers.Contract(
         //   SmartContractAddress,
@@ -405,7 +405,7 @@ const Mint = () => {
 
     try {
       const chainId = await web3.eth.getChainId()
-      if (chainId === 4002) {
+      if (chainId === 250) {
 
         // const contract = new ethers.Contract(
         //   SmartContractAddress,
@@ -426,7 +426,7 @@ const Mint = () => {
 
     try {
       const chainId = await web3.eth.getChainId()
-      if (chainId === 4002) {
+      if (chainId === 250) {
 
         // const contract = new ethers.Contract(
         //   SmartContractAddress,
@@ -450,7 +450,7 @@ const Mint = () => {
 
     try {
       const chainId = await web3.eth.getChainId()
-      if (chainId === 4002) {
+      if (chainId === 250) {
 
         // const contract = new ethers.Contract(
         //   SmartContractAddress,
@@ -510,7 +510,7 @@ const Mint = () => {
       setLoading(true);
       try {
         const chainId = await web3.eth.getChainId()
-        if (chainId === 4002) {
+        if (chainId === 250) {
           try {
             console.log('signer: ', signer);
             contract = new ethers.Contract(
@@ -553,7 +553,7 @@ const Mint = () => {
 
             const network = await provider.getNetwork();
 
-            if (network.chainId !== 4002) {
+            if (network.chainId !== 250) {
 
               MintAlert.fire({
                 title:
@@ -592,7 +592,7 @@ const Mint = () => {
 
     try {
       const chainId = await web3.eth.getChainId()
-      if (chainId === 4002) {
+      if (chainId === 250) {
         await getSold()
         checkConnect();
       }
@@ -623,7 +623,7 @@ const Mint = () => {
   const checkNetwork = async () => {
     try {
       const chainId = await web3.eth.getChainId()
-      if (chainId === 4002) {
+      if (chainId === 250) {
         checkConnect();
         fetchProgress();
         getCurrentPrice();
