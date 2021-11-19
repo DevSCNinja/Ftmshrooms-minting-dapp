@@ -707,19 +707,19 @@ const Mint = () => {
                       👍 1-500 for 35 FTM
                     </Typography>
                     <Typography component="p" className={globalClasses.tooltipText}>
-                      👍 501-1000 for 50 FTM
+                      👍 501-1000 for 45 FTM
                     </Typography>
                     <Typography component="p" className={globalClasses.tooltipText}>
-                      👍 1001-1500 for 75 FTM
+                      👍 1001-1500 for 60 FTM
                     </Typography>
                     <Typography component="p" className={globalClasses.tooltipText}>
-                      👍 1501-2000 for 100 FTM
+                      👍 1501-2000 for 80 FTM
                     </Typography>
                     <Typography component="p" className={globalClasses.tooltipText}>
-                      👍 2001-2250 for 0 FTM (for team)
+                      👍 2001-2250 for 0 FTM (for holders)
                     </Typography>
                     <Typography component="p" className={globalClasses.tooltipText}>
-                      👍 2251-2500 for 0 FTM (for holders)
+                      👍 2251-2500 for 0 FTM (for team)
                     </Typography>
 
                   </>
