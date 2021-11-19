@@ -16,7 +16,7 @@ import Web3Modal from "web3modal";
 // Contract
 import SmartContract from "../../../ABI/Shrooms.json";
 
-const SmartContractAddress = "0x5D046493cCDeB472D46a99Dec6dDDb2428A7C5a6";
+const SmartContractAddress = "0x27D61C32e82E2eCb32EA236aAE3801576Dc65f33";
 
 // Components
 import MintProgress from "./MintProgress/MintProgress";
@@ -439,9 +439,37 @@ const Mint = () => {
     }
   };
 
-  const mint = async () => {
+  const getPaused = async () => {
     if (signer === undefined) return;
 
+    try {
+      const chainId = await web3.eth.getChainId()
+      if (chainId === 4002) {
+
+        const contract = new ethers.Contract(
+          SmartContractAddress,
+          SmartContract,
+          signer
+        );
+
+        const paused = await contract.paused();
+
+        
+        return paused;
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  };
+
+  const mint = async () => {
+    if (signer === undefined) return;
+    const paused = await getPaused();
+    console.log('paused: ', paused);
+    if (paused == true) {
+      toastError("Sale not started!");
+      return;
+    }
     const curStage = await getCurrentStage();
     await getSold();
     MAX_PURCHASE_COUNT = curStage === 0 ? 10 : curStage === 1 ? 100 : 1;
@@ -485,12 +513,13 @@ const Mint = () => {
               SmartContract,
               signer
             );
-
+            console.log('esimatedPRice: ', web3.utils.toWei(estimatedPrice, 'ether'))
             await contract.mint(amount, {
-              value: (estimatedPrice).toString(),
+              value: web3.utils.toWei(estimatedPrice, 'ether'),
             });
 
             setLoading(false)
+            getSold();
             MintAlert.fire({
               title:
                 <Typography component="h2" className={globalClasses.alertTitle}>

@@ -7,12 +7,12 @@ const Info = () => {
   return (
     <Container>
       <Wrapper>
-        <p className="header">Lorem, ipsum.</p>
+        {/* <p className="header">Lorem, ipsum.</p>
 
         <p className="info">
           Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptatem
           facere illo aliquid enim. Officiis, eum.
-        </p>
+        </p> */}
 
         <div className="socials">
           <IconButton>
