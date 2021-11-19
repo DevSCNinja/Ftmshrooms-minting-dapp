@@ -627,12 +627,12 @@ const Mint = () => {
   useEffect(() => {
     web3 = new Web3(window.ethereum);
     checkNetwork();
-  }, [])
+  }, [checkNetwork])
 
   useEffect(() => {
     fetchProgress();
     getCurrentPrice();
-  }, [sold, connected]);
+  }, [sold, connected, fetchProgress]);
 
   return (
     <Wrapper>
