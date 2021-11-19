@@ -68,6 +68,7 @@ let web3 = undefined
 let connection = undefined
 let provider = undefined
 let signer = undefined
+let contract = undefined
 
 const Mint = () => {
   const globalClasses = globalUseStyles()
@@ -167,11 +168,11 @@ const Mint = () => {
       const chainId = await web3.eth.getChainId()
       if (chainId === 4002) {
 
-        const contract = new ethers.Contract(
-          SmartContractAddress,
-          SmartContract,
-          provider
-        );
+        // const contract = new ethers.Contract(
+        //   SmartContractAddress,
+        //   SmartContract,
+        //   provider
+        // );
         const whiteListState = await contract.getWhitelistState(address);
         return whiteListState;
       } else {
@@ -196,11 +197,11 @@ const Mint = () => {
       const chainId = await web3.eth.getChainId()
       if (chainId === 4002) {
 
-        const contract = new ethers.Contract(
-          SmartContractAddress,
-          SmartContract,
-          provider
-        );
+        // const contract = new ethers.Contract(
+        //   SmartContractAddress,
+        //   SmartContract,
+        //   provider
+        // );
         const currentStage = await contract.getCurrentStage();
         return currentStage;
       } else {
@@ -222,11 +223,11 @@ const Mint = () => {
 
   const getSold = async () => {
 
-    const contract = new ethers.Contract(
-      SmartContractAddress,
-      SmartContract,
-      provider
-    );
+    // const contract = new ethers.Contract(
+    //   SmartContractAddress,
+    //   SmartContract,
+    //   provider
+    // );
 
     const sold = await contract.sold()
     setSold(sold.toString())
@@ -275,6 +276,11 @@ const Mint = () => {
           web3Modal = new Web3Modal();
           connection = await web3Modal.connect();
           provider = new ethers.providers.Web3Provider(connection);
+          contract = new ethers.Contract(
+            SmartContractAddress,
+            SmartContract,
+            provider
+          );
           signer = provider.getSigner();
           web3 = new Web3(Web3.givenProvider);
 
@@ -317,11 +323,11 @@ const Mint = () => {
       const chainId = await web3.eth.getChainId()
       if (chainId === 4002) {
 
-        const contract = new ethers.Contract(
-          SmartContractAddress,
-          SmartContract,
-          signer
-        );
+        // const contract = new ethers.Contract(
+        //   SmartContractAddress,
+        //   SmartContract,
+        //   signer
+        // );
 
         const balance = await contract.isDiscountAddress(account);
         return balance;
@@ -338,11 +344,11 @@ const Mint = () => {
       const chainId = await web3.eth.getChainId()
       if (chainId === 4002) {
 
-        const contract = new ethers.Contract(
-          SmartContractAddress,
-          SmartContract,
-          signer
-        );
+        // const contract = new ethers.Contract(
+        //   SmartContractAddress,
+        //   SmartContract,
+        //   signer
+        // );
 
         const mintedCnt = await contract.preMintedCnt(account);
         return mintedCnt;
@@ -359,11 +365,11 @@ const Mint = () => {
       const chainId = await web3.eth.getChainId()
       if (chainId === 4002) {
 
-        const contract = new ethers.Contract(
-          SmartContractAddress,
-          SmartContract,
-          signer
-        );
+        // const contract = new ethers.Contract(
+        //   SmartContractAddress,
+        //   SmartContract,
+        //   signer
+        // );
 
         const totalCnt = await contract.totalMinted();
         return totalCnt;
@@ -380,11 +386,11 @@ const Mint = () => {
       const chainId = await web3.eth.getChainId()
       if (chainId === 4002) {
 
-        const contract = new ethers.Contract(
-          SmartContractAddress,
-          SmartContract,
-          signer
-        );
+        // const contract = new ethers.Contract(
+        //   SmartContractAddress,
+        //   SmartContract,
+        //   signer
+        // );
 
         const balance = await contract.balanceOf(account);
         return balance;
@@ -401,11 +407,11 @@ const Mint = () => {
       const chainId = await web3.eth.getChainId()
       if (chainId === 4002) {
 
-        const contract = new ethers.Contract(
-          SmartContractAddress,
-          SmartContract,
-          signer
-        );
+        // const contract = new ethers.Contract(
+        //   SmartContractAddress,
+        //   SmartContract,
+        //   signer
+        // );
 
         const freeMinted = await contract.freeminted(account);
         return freeMinted;
@@ -422,11 +428,11 @@ const Mint = () => {
       const chainId = await web3.eth.getChainId()
       if (chainId === 4002) {
 
-        const contract = new ethers.Contract(
-          SmartContractAddress,
-          SmartContract,
-          signer
-        );
+        // const contract = new ethers.Contract(
+        //   SmartContractAddress,
+        //   SmartContract,
+        //   signer
+        // );
 
         const mintCost = await contract.getCurrentPrice();
 
@@ -446,11 +452,11 @@ const Mint = () => {
       const chainId = await web3.eth.getChainId()
       if (chainId === 4002) {
 
-        const contract = new ethers.Contract(
-          SmartContractAddress,
-          SmartContract,
-          signer
-        );
+        // const contract = new ethers.Contract(
+        //   SmartContractAddress,
+        //   SmartContract,
+        //   signer
+        // );
 
         const paused = await contract.paused();
 
@@ -465,7 +471,6 @@ const Mint = () => {
   const mint = async () => {
     if (signer === undefined) return;
     const paused = await getPaused();
-    console.log('paused: ', paused);
     if (paused == true) {
       toastError("Sale not started!");
       return;
@@ -485,7 +490,6 @@ const Mint = () => {
     switch (curStage) {
       case 0:
         const whiteList = await getWhitelistState(accounts[0]);
-        console.log("whitelist:", whiteList, accounts[0])
         const preMinted = await preMintedCount(accounts[0]);
         if (!whiteList) { flag = 1; toastError(ErrorLog[1]); }
         else if (Number(preMinted?.toString()) + amount > MAX_PURCHASE_COUNT) { flag = 1; toastError(ErrorLog[2]); }
@@ -508,16 +512,16 @@ const Mint = () => {
         const chainId = await web3.eth.getChainId()
         if (chainId === 4002) {
           try {
-            const contract = new ethers.Contract(
+            console.log('signer: ', signer);
+            contract = new ethers.Contract(
               SmartContractAddress,
               SmartContract,
               signer
             );
-            console.log('esimatedPRice: ', web3.utils.toWei(estimatedPrice, 'ether'))
+            console.log("Money:", estimatedPrice, amount)
             await contract.mint(amount, {
-              value: web3.utils.toWei(estimatedPrice, 'ether'),
+              value: estimatedPrice+'000000000000000000',
             });
-
             setLoading(false)
             getSold();
             MintAlert.fire({
