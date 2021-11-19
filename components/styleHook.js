@@ -88,6 +88,7 @@ const globalUseStyles = makeStyles(() => ({
     alertText: {
         fontSize: 16,
         fontWeight: "bold",
+        textTransform: "uppercase",
         color: "#333",
         marginBottom: 15,
         letterSpacing: 1
