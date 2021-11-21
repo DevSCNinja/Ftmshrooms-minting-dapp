@@ -19,6 +19,5 @@ const Wrapper = styled(Particles)`
   top: 0;
   left: 0;
   opacity: 1;
-
   z-index: 1;
 `;

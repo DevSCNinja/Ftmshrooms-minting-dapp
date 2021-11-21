@@ -1,11 +1,11 @@
-import { Tooltip } from '@mui/material';
 import styled from 'styled-components';
 
 export const Wrapper = styled.div`
+    background-color: #4831d4;
+    min-height: 100vh;
+    font-family: "Roboto Slab", serif;
     position: relative;
-    z-index: 99;
 `;
-
 
 export const Header = styled.header`
     display: flex;
@@ -13,6 +13,8 @@ export const Header = styled.header`
     align-items: center;
     padding: 5px 10px;
     background-color: #0000008f;
+    position: relative;
+    z-index: 3;
     img {
         margin-top: 17px;
         @media (max-width: 998px) {
@@ -20,6 +22,13 @@ export const Header = styled.header`
         }
     }
     
+`;
+
+export const LogoButton = styled.button`
+    outline: none;
+    border: none;
+    background: transparent;
+    cursor: pointer;
 `;
 
 
@@ -38,6 +47,8 @@ export const PreviewImageContent = styled.div`
     display: flex;
     align-item: center;
     justify-content: center;
+    position: relative;
+    z-index: 3;
     @media (max-width: 998px) {
       width: 120px;
     }
@@ -103,6 +114,8 @@ export const MintForm = styled.div`
     justify-content: center;
     text-align: center;
     margin-top: 150px;
+    position: relative;
+    z-index: 3;
     @media (max-width: 998px) {
       margin-top: 30px;
     }

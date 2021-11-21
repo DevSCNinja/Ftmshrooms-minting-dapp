@@ -148,6 +148,92 @@ const globalUseStyles = makeStyles(() => ({
         fontWeight: 200,
         color: "#fff",
         lineHeight: 2
+    },
+    linkButton: {
+        fontSize: 18,
+        fontWeight: 700,
+        color: "#fff",
+        marginRight: 20
+    },
+    backButton: {
+        fontSize: 16,
+        fontWeight: 700,
+        color: "#fff",
+        marginRight: 20,
+        borderColor: "#fff",
+        borderRadius: 20,
+        position: "relative",
+        zIndex: 4,
+        marginTop: 20
+    },
+    cardTitle: {
+        fontSize: 16,
+        color: "#fff",
+        fontWeight: 800,
+        maxWidth: 240,
+        padding: "15px 10px",
+        position: "relative",
+        background: "#000000b8",
+        position: "absolute",
+        width: "100%",
+        bottom: 0,
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center"
+    },
+    cardDescription: {
+        fontSize: 13,
+        color: "#000",
+        maxWidth: 240,
+        padding: 10,
+        height: 60,
+        position: "relative",
+        "&::after": {
+            content: "",
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            width: "100%",
+            height: 20,
+            background: "#fff"
+        }
+
+    },
+    cardDescriptionOpen: {
+        fontSize: 13,
+        color: "#000",
+        maxWidth: 240,
+        padding: 10,
+        height: "auto"
+    },
+    listTitle: {
+        fontSize: 30,
+        color: "#fff",
+        height: "auto",
+        fontWeight: 900,
+        position: "relative",
+        zIndex: 3,
+        paddingBottom: 20,
+        textAlign: 'center',
+        borderBottom: "1px solid #ffffff3b",
+        marginBottom: 30,
+        "& span": {
+            fontSize: 24,
+            marginLeft: 10
+        }
+    },
+    emptyText: {
+        fontSize: 20,
+        color: "#fff",
+        height: "auto",
+        fontWeight: 900,
+        position: "relative",
+        zIndex: 3,
+        paddingTop: 20,
+        textAlign: 'center',
+        marginBottom: 20,
+        position: "relative",
+        zIndex: 3
     }
 }));
 

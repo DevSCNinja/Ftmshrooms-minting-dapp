@@ -24,7 +24,7 @@ import { Container, Typography } from "@mui/material";
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import RemoveRoundedIcon from '@mui/icons-material/RemoveRounded';
 import LoadingButton from '@mui/lab/LoadingButton';
-import { Wrapper, Header, MainContent, PreviewImage, InfoContent, Div, Img, MintForm, PriceBox, PreviewImageContent } from '../../Widget';
+import { Wrapper, MainContent, PreviewImage, InfoContent, Div, Img, MintForm, PriceBox, PreviewImageContent } from '../../Widget';
 import globalUseStyles from '../../styleHook';
 import Skeleton from '@mui/material/Skeleton'
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
@@ -35,6 +35,7 @@ import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import MainHeader from "../../Header";
 
 const MintAlert = withReactContent(Swal)
 const ErrorLog = [
@@ -63,11 +64,11 @@ const HtmlTooltip = styled(({ className, ...props }) => (
     })
   );
 
+export let web3 = undefined
+export let provider = undefined
+export let signer = undefined
 let web3Modal = undefined
-let web3 = undefined
 let connection = undefined
-let provider = undefined
-let signer = undefined
 let contract = undefined
 
 const Mint = () => {
@@ -145,6 +146,7 @@ const Mint = () => {
         }
         if (isDiscountUser(accounts[0]) > 0)
           estimatePrice = estimatePrice * 90 / 100
+        console.log("estimate:", estimatePrice)
         setEstimatedPrice(estimatePrice)
       } else {
         toast.error('The wrong network, please switch to the Fantom network.', {
@@ -281,7 +283,9 @@ const Mint = () => {
             SmartContract,
             provider
           );
-          signer = provider.getSigner();
+          signer = provider.getSigner()
+          console.log("signerMT:", signer)
+
           web3 = new Web3(Web3.givenProvider);
 
           /* show alert when success the connection */
@@ -294,8 +298,7 @@ const Mint = () => {
             draggable: true,
             theme: "colored"
           });
-          /* slice the address like 0x23...34f4 */
-          setSignerAddress(signer.provider.provider.selectedAddress.slice(2, 6) + "..." + signer.provider.provider.selectedAddress.slice(38, 42));
+          setSignerAddress(signer.provider.provider.selectedAddress);
           setConnected(true);
           // checkConnect();
           // await getCurrentStage();
@@ -460,7 +463,7 @@ const Mint = () => {
 
         const paused = await contract.paused();
 
-        
+
         return paused;
       }
     } catch (err) {
@@ -469,6 +472,7 @@ const Mint = () => {
   };
 
   const mint = async () => {
+    setLoading(true);
     if (signer === undefined) return;
     const paused = await getPaused();
     if (paused == true) {
@@ -506,21 +510,19 @@ const Mint = () => {
     if (price * amount < estimatedPrice) { flag = 1; toastError(ErrorLog[6]); }
 
     if (flag === 0) {
-      console.log("flag:", flag)
       setLoading(true);
       try {
         const chainId = await web3.eth.getChainId()
         if (chainId === 250) {
           try {
-            console.log('signer: ', signer);
             contract = new ethers.Contract(
               SmartContractAddress,
               SmartContract,
               signer
             );
-            console.log("Money:", estimatedPrice, amount)
+            console.log(amount, Number(estimatedPrice).toFixed(0)+'000000000000000000')
             await contract.mint(amount, {
-              value: estimatedPrice+'000000000000000000',
+              value: Number(estimatedPrice).toFixed(0) + '000000000000000000',
             });
             setLoading(false)
             getSold();
@@ -584,6 +586,7 @@ const Mint = () => {
 
       setLoading(false)
     }
+    setLoading(false)
 
   };
 
@@ -614,7 +617,7 @@ const Mint = () => {
 
     if (signer._isSigner) {
       setConnected(true)
-      setSignerAddress(signer.provider.provider.selectedAddress.slice(2, 6) + "..." + signer.provider.provider.selectedAddress.slice(38, 42));
+      setSignerAddress(signer.provider.provider.selectedAddress);
     } else {
       setConnected(false)
     }
@@ -669,21 +672,11 @@ const Mint = () => {
 
   return (
     <Wrapper>
-      <Header>
-        <Div>
-          <a href="https://ftmshrooms.io/" target="_blank" rel="noreferrer">
-            <Img
-              src="https://sp-ao.shortpixel.ai/client/to_webp,q_glossy,ret_img/https://ftmshrooms.io/wp-content/uploads/2021/10/cropped-fantomshrooms_logo_blue.png"
-              alt=""
-              className="logo"
-              data-nsfw-filter-status=""
-            />
-          </a>
-        </Div>
-        <Button variant="contained" onClick={handleConnection} className={globalClasses.connectButton} disabled={connected}>
-          {connected ? <p style={{ letterSpacing: 2 }}><span style={{ textTransform: "none" }}>0x</span>{signerAddress}</p> : <p>Connect</p>}
-        </Button>
-      </Header>
+      <MainHeader
+        handleConnection={handleConnection}
+        connected={connected}
+        signerAddress={signerAddress}
+      />
       <Container>
         <MainContent>
           <PreviewImage>
