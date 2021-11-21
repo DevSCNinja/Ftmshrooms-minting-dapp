@@ -105,9 +105,9 @@ export default function Shrooms() {
         {empty === true &&
           <div style={{ position: "relative", zIndex: 4 }}>
             <Typography className={globalClasses.emptyText}>
-              You have any Shrooms
+              You don't have any Shrooms
             </Typography>
-            <Button onClick={() => router.push("/")} className={globalClasses.linkButton} variant="outlined">
+            <Button onClick={() => router.push("/")} className={globalClasses.linkButton} variant="outlined" style={{color: '#fff', backgroundColor: '#006b94', border: '1px solid #006b94'}}>
               Buy Shrooms
             </Button>
           </div>
